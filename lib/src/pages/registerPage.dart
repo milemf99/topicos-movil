@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:topicos_clinica/src/models/paciente.dart';
 import 'package:topicos_clinica/src/models/person.dart';
+import 'package:topicos_clinica/src/services/auth.dart';
 
 import '../globals.dart';
 import 'package:get/route_manager.dart';
@@ -12,7 +14,7 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
 
-  Persona persona = Persona(usuario: Usuario());
+  Paciente paciente = Paciente(persona: Persona(usuario: Usuario()));
   String? repeatPassword;
 
   Widget renderNombre() {
@@ -20,7 +22,7 @@ class _RegisterPageState extends State<RegisterPage> {
       padding: const EdgeInsets.only(top: 40),
       child: TextFormField(
         decoration: InputDecoration(hintText: 'Nombre(s)'),
-        onChanged: (name) => persona.nombres = name,
+        onChanged: (name) => paciente.persona!.nombres = name,
         validator: (name) => name!.isEmpty ? 'Nombre Requerido' : null,
       ),
     );
@@ -31,7 +33,7 @@ class _RegisterPageState extends State<RegisterPage> {
       padding: const EdgeInsets.only(top: 40),
       child: TextFormField(
         decoration: InputDecoration(hintText: 'Apellido(s)'),
-        onChanged: (apellidos) => persona.apellidos = apellidos,
+        onChanged: (apellidos) => paciente.persona!.apellidos = apellidos,
         validator: (apellidos) => apellidos!.isEmpty ? 'Apellidos Requeridos' : null,
       ),
     );
@@ -42,7 +44,7 @@ class _RegisterPageState extends State<RegisterPage> {
       padding: const EdgeInsets.only(top: 40),
       child: TextFormField(
         decoration: InputDecoration(hintText: 'Correo Electronico'),
-        onChanged: (email) => persona.usuario!.correoElectronico = email,
+        onChanged: (email) => paciente.persona!.usuario!.correoElectronico = email,
         validator: (email) => email!.isEmpty ? 'Correo Requerido' : null,
       ),
     );
@@ -54,7 +56,7 @@ class _RegisterPageState extends State<RegisterPage> {
       child: TextFormField(
         decoration: InputDecoration(hintText: 'Contraseña'),
         obscureText: true,
-        onChanged: (pwd) => persona.usuario!.password = pwd,
+        onChanged: (pwd) => paciente.persona!.usuario!.password = pwd,
         validator: (pwd) => pwd!.isEmpty ? 'Contraseña Requerida' : null,
       ),
     );
@@ -67,7 +69,7 @@ class _RegisterPageState extends State<RegisterPage> {
         decoration: InputDecoration(hintText: 'Confirmar contraseña'),
         obscureText: true,
         onChanged: (pwd) => this.repeatPassword = pwd,
-        validator: (pwd) => pwd != this.persona.usuario!.password ? 'Confirmar Contraseña' : null,
+        validator: (pwd) => pwd != this.paciente.persona!.usuario!.password ? 'Confirmar Contraseña' : null,
       ),
     );
   }
@@ -77,7 +79,7 @@ class _RegisterPageState extends State<RegisterPage> {
       padding: const EdgeInsets.only(top: 40),
       child: TextFormField(
         decoration: InputDecoration(hintText: 'Carnet de identidad'),
-        onChanged: (ci) => this.persona.ci = int.tryParse(ci),
+        onChanged: (ci) => this.paciente.persona!.ci = int.tryParse(ci),
         validator: (ci) => ci!.isEmpty ? 'Número Requerido' : null,
       ),
     );
@@ -88,7 +90,7 @@ class _RegisterPageState extends State<RegisterPage> {
       padding: const EdgeInsets.only(top: 40),
       child: TextFormField(
         decoration: InputDecoration(hintText: 'Direccion'),
-        onChanged: (address) => this.persona.telefonoCodigo = address,
+        onChanged: (address) => this.paciente.direccionDomicilio = address,
         validator: (address) => address!.isEmpty ? 'Dirección Requerida' : null,
       ),
     );
@@ -99,7 +101,7 @@ class _RegisterPageState extends State<RegisterPage> {
       padding: const EdgeInsets.only(top: 40),
       child: TextFormField(
         decoration: InputDecoration(hintText: 'Fecha de nacimiento'),
-        onChanged: (birthdate) => this.persona.fechaCreacion = DateTime.tryParse(birthdate),
+        onChanged: (birthdate) => this.paciente.fechaNacimiento = DateTime.tryParse(birthdate),
         validator: (birthdate) => DateTime.tryParse(birthdate!) == null ? 'Fecha Requerida' : null,
       ),
     );
@@ -110,7 +112,7 @@ class _RegisterPageState extends State<RegisterPage> {
       padding: const EdgeInsets.only(top: 40),
       child: TextFormField(
         decoration: InputDecoration(hintText: 'Telefono'),
-        onChanged: (phone) => this.persona.telefono = int.tryParse(phone),
+        onChanged: (phone) => this.paciente.persona!.telefono = int.tryParse(phone),
         validator: (phone) => int.tryParse(phone!) == null ? 'Teléfono Requerido' : null,
       ),
     );
@@ -121,8 +123,10 @@ class _RegisterPageState extends State<RegisterPage> {
       padding: const EdgeInsets.only(top: 40),
       child: TextFormField(
         decoration: InputDecoration(hintText: 'Sexo'),
-        onChanged: (gender) {},
-        validator: (gender) => 'MFmf'.contains(gender!) ? null : 'Género Requerido (M/F)',
+        onChanged: (gender) {
+          this.paciente.sexo = gender;
+        },
+        validator: (gender) => 'MFmf'.contains(gender!) && gender.length < 2 ? null : 'Género Requerido (M/F)',
       ),
     );
   }
@@ -135,6 +139,7 @@ class _RegisterPageState extends State<RegisterPage> {
         textColor: Colors.white,
         onPressed: () {
           if (this._formKey.currentState!.validate()) {
+            Auth.instance.signUp(this.paciente);
             Get.toNamed(Routes.home);
           }
         },
@@ -164,10 +169,10 @@ class _RegisterPageState extends State<RegisterPage> {
               renderPassword(),
               renderConfirmPassword(),
               renderCarnet(),
-              // renderDireccion(),
-              // renderFecha(),
+              renderDireccion(),
+              renderFecha(),
               renderTelf(),
-              // renderSexo(),
+              renderSexo(),
               renderLoginButton(),
             ],
           ),
