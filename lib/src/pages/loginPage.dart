@@ -47,11 +47,12 @@ class _LoginPageState extends State<LoginPage> {
         textColor: Colors.white,
         color: Colors.deepPurpleAccent.shade400,
         onPressed: () async {
-          // if (!_formKey.currentState!.validate()) {
-            print(this.persona.usuario!.toRawJson());
-            await Auth.instance.signIn(this.persona.usuario);
-            Get.toNamed(Routes.home);
-          // }
+          if (_formKey.currentState!.validate()) {
+            final auth = await Auth.instance.signIn(this.persona.usuario);
+            if (auth) {
+              Get.toNamed(Routes.home);
+            }
+          }
         },
       ),
     );
