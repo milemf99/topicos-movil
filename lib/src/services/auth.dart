@@ -1,6 +1,7 @@
 import 'package:http/http.dart' show post;
 
 import 'package:topicos_clinica/src/models/Token.dart';
+import 'package:topicos_clinica/src/models/paciente.dart';
 import 'package:topicos_clinica/src/models/person.dart';
 
 import '../globals.dart' show API_URL, box;
@@ -22,11 +23,11 @@ class Auth {
     }
   }
 
-  void signUp(Persona persona) {
+  void signUp(Paciente paciente) {
     post(
       Uri.parse('$API_URL/pacientes/'),
       headers: {'Content-type': 'application/json'},
-      body: persona.toRawJson(),
+      body: paciente.toRawJson(),
     ).then((res) async {
       if (res.statusCode == 200) {
         this._token = Token.fromRawJson(res.body);
@@ -37,12 +38,10 @@ class Auth {
 
   Future<bool> signIn(Usuario? usuario) async {
     try {
-      print(usuario!.toRawJson());
-      print('$API_URL/iniciar-sesion/');
       final res = await post(
         Uri.parse('$API_URL/iniciar-sesion/'),
         headers: {'Content-Type': 'application/json'},
-        body: usuario.toRawJson(),
+        body: usuario!.toRawJson(),
       );
 
       if (res.statusCode == 200) {
@@ -56,7 +55,7 @@ class Auth {
     }
 
     return false;
-  }
+}
 
   Future<void> signOut() async {
     await box.remove('token');
