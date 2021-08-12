@@ -51,11 +51,11 @@ class Persona {
       "apellidos": apellidos,
       "ci": ci,
       "telefono": telefono,
-      "fecha_creacion": fechaCreacion!.toIso8601String(),
-      "fecha_actualizacion": fechaActualizacion!.toIso8601String(),
+      "fecha_creacion": fechaCreacion?.toIso8601String(),
+      "fecha_actualizacion": fechaActualizacion?.toIso8601String(),
       "telefono_codigo": telefonoCodigo,
       "correo_electronico_codigo": correoElectronicoCodigo,
-      "usuario": usuario!.toJson(),
+      "usuario": usuario?.toJson(),
     };
   }
 }
