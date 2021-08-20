@@ -10,7 +10,7 @@ import 'src/globals.dart' show pages, Routes;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  SystemChrome.setPreferredOrientations([
+  SystemChrome.setPreferredOrientations([ 
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
